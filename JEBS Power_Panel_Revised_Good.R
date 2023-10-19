@@ -211,7 +211,7 @@ ui <- shinyUI(
           numericInput(
             inputId = "mt",
             label = "Total number of treatment clusters (integer)",
-            min = 2,
+            min = 1,  # Updated 10/19/2023
             step = 1,
             value = 20),
           textInput(
@@ -226,7 +226,7 @@ ui <- shinyUI(
           numericInput(
             inputId = "mc",
             label = "Total number of comparison clusters (integer)",
-            min = 2,
+            min = 1, # Updated 10/19/2023
             step = 1,
             value = 20),
           textInput(
@@ -1121,14 +1121,14 @@ server <- shinyServer(
       {
         mclus <- mt
       }
-
+# Updated 10/19/2023 from mt<=1 and mc<=1
       if (samp_size==1) {
-        if ((!exists("mt")) | (is.na(mt)) | (mt<=1)) {
+        if ((!exists("mt")) | (is.na(mt)) | (mt<1)) {
           crash <- 1
           nerr  <- nerr + 1
           err_mess[1,nerr] <- c("Invalid number of treatment clusters")
         }
-        if ((!exists("mc")) | (is.na(mc)) | (mc<=1)) {
+        if ((!exists("mc")) | (is.na(mc)) | (mc<1)) {
           crash <- 1
           nerr  <- nerr + 1
           err_mess[1,nerr] <- c("Invalid number of comparison clusters")
@@ -1154,9 +1154,10 @@ server <- shinyServer(
           bad_time <- 1
         } else if ((!is.na(mt)) & (mt>0) & (!is.na(ntimeg)) & (ntimeg>0) & (bad_time==0))
         {
-          sum_mt = 0;
+          sum_mt <- 0
+  # Changed 10/19/2023 from mtk[i]<=1 and mck[i]<=1
           for (i in 1:ntimeg) {
-            if ((is.na(mtk[i])) | (mtk[i]<=1) | (mtk[i]>mt) | (mtk[i]!=round(mtk[i]))) {
+            if ((is.na(mtk[i])) | (mtk[i]<1) | (mtk[i]>mt) | (mtk[i]!=round(mtk[i]))) {
               crash <- 1
               nerr  <- nerr + 1
               err_mess[1,nerr] <- sprintf("Invalid number of treatment clusters in timing group %d",i)
@@ -1187,7 +1188,7 @@ server <- shinyServer(
           {
             sum_mc = 0;
             for (i in 1:ntimeg) {
-              if ((is.na(mck[i])) | (mck[i]<=1) | (mck[i]>mc) | (mck[i]!=round(mck[i]))) {
+              if ((is.na(mck[i])) | (mck[i]<1) | (mck[i]>mc) | (mck[i]!=round(mck[i]))) {
                 crash <- 1
                 nerr  <- nerr + 1
                 err_mess[1,nerr] <- sprintf("Invalid number of comparison clusters in timing group %d",i)
